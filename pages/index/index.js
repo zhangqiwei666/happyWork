@@ -11,6 +11,9 @@ import {
   getAllCards
 } from '../../utils/storage';
 import { isLoggedIn } from '../../utils/auth';
+import { ensureCardSynced } from '../../utils/card-sync';
+import { PROVINCES_DATA, searchCities } from '../../utils/city-data';
+import { getWeatherInfo, saveSelectedCity } from '../../utils/weather-service';
 
 Page({
   data: {
@@ -19,6 +22,13 @@ Page({
     selectedMoodId: 'chill',
     currentMood: MOOD_TYPES[1], // 默认放空摸鱼
     currentWeather: WEATHER_TYPES[0], // 默认晴天
+    currentCityName: '',
+    activeWeatherTab: 'city', // 'city' | 'mood'
+    provincesList: PROVINCES_DATA,
+    selectedProvIndex: 1, // 默认广东省
+    currentProvCities: PROVINCES_DATA[1].cities,
+    citySearchKeyword: '',
+    citySearchResults: [],
     currentQuote: '',
     userNote: '',
     weatherPickerVisible: false,
@@ -32,9 +42,25 @@ Page({
   onLoad() {
     this.initDefaultQuote('chill');
     this.checkTodayCard();
+    this.loadRealWeather();
     // 首次加载未登录时提示登录
     if (!isLoggedIn()) {
       this.openLogin();
+    }
+  },
+
+  // 调取天气系统获取定位与百度天气数据
+  async loadRealWeather(targetCity = null) {
+    try {
+      const weather = await getWeatherInfo(targetCity);
+      if (weather) {
+        this.setData({
+          currentWeather: weather,
+          currentCityName: weather.cityName || (targetCity && targetCity.name) || '当前城市'
+        });
+      }
+    } catch (e) {
+      console.warn('天气加载失败：', e);
     }
   },
 
@@ -114,7 +140,89 @@ Page({
   onOpenWeatherPicker() {
     triggerHaptic('light');
     this.setData({
-      weatherPickerVisible: true
+      weatherPickerVisible: true,
+      citySearchKeyword: '',
+      citySearchResults: []
+    });
+  },
+
+  // 切换城市/天气 Tab
+  onSwitchWeatherTab(e) {
+    const tab = e.currentTarget.dataset.tab;
+    triggerHaptic('light');
+    this.setData({ activeWeatherTab: tab });
+  },
+
+  // 选择省份
+  onSelectProvince(e) {
+    const idx = Number(e.currentTarget.dataset.index);
+    triggerHaptic('selection');
+    this.setData({
+      selectedProvIndex: idx,
+      currentProvCities: this.data.provincesList[idx].cities || []
+    });
+  },
+
+  // 搜索框输入（模糊搜索）
+  onCitySearchInput(e) {
+    const kw = (e.detail.value || '').trim();
+    if (!kw) {
+      this.setData({
+        citySearchKeyword: '',
+        citySearchResults: []
+      });
+      return;
+    }
+    const results = searchCities(kw);
+    this.setData({
+      citySearchKeyword: kw,
+      citySearchResults: results
+    });
+  },
+
+  // 清空搜索输入
+  onClearCitySearch() {
+    this.setData({
+      citySearchKeyword: '',
+      citySearchResults: []
+    });
+  },
+
+  // 点击选择城市
+  onSelectCityItem(e) {
+    const city = e.currentTarget.dataset.city;
+    if (!city) return;
+    triggerHaptic('medium');
+
+    saveSelectedCity(city);
+    this.setData({
+      currentCityName: city.name,
+      weatherPickerVisible: false,
+      citySearchKeyword: '',
+      citySearchResults: []
+    });
+
+    wx.showLoading({ title: '加载天气中...' });
+    this.loadRealWeather(city).finally(() => {
+      wx.hideLoading();
+      wx.showToast({
+        title: `已切换至 ${city.name}`,
+        icon: 'none',
+        duration: 1500
+      });
+    });
+  },
+
+  // 重新定位到当前地理位置
+  onReLocate() {
+    triggerHaptic('medium');
+    wx.showLoading({ title: '定位中...' });
+    // 传一个空参数促使重新通过 wx.getLocation 获取当前城市
+    wx.removeStorageSync('mood_selected_city');
+    this.loadRealWeather(null).finally(() => {
+      wx.hideLoading();
+      this.setData({ weatherPickerVisible: false });
+      wx.showToast({ title: '定位已更新', icon: 'success' });
     });
   },
 
@@ -130,7 +238,10 @@ Page({
     const item = e.currentTarget.dataset.item;
     triggerHaptic('selection');
     this.setData({
-      currentWeather: item,
+      currentWeather: {
+        ...this.data.currentWeather,
+        ...item
+      },
       weatherPickerVisible: false
     });
     wx.showToast({
@@ -144,6 +255,40 @@ Page({
   onNoteInput(e) {
     this.setData({
       userNote: e.detail.value
+    });
+  },
+
+  // 以下为 wxml 中绑定的事件名（与上方实现保持一致）
+  onNoteChange(e) {
+    this.onNoteInput(e);
+  },
+
+  openWeatherPicker() {
+    this.onOpenWeatherPicker();
+  },
+
+  onRandomQuote() {
+    this.onRefreshQuote();
+  },
+
+  goToCardDetail() {
+    this.onViewCardDetail();
+  },
+
+  goToDecompress() {
+    triggerHaptic('light');
+    wx.switchTab({ url: '/pages/decompress/decompress' });
+  },
+
+  // 同步卡片到服务端（用于分享），成功后更新当前卡片的 serverId
+  syncCurrentCard() {
+    const card = this.data.generatedCard;
+    if (!card) return Promise.reject(new Error('暂无卡片'));
+    return ensureCardSynced(card).then((serverId) => {
+      if (this.data.generatedCard && this.data.generatedCard.id === card.id) {
+        this.setData({ 'generatedCard.serverId': serverId });
+      }
+      return serverId;
     });
   },
 
@@ -174,10 +319,12 @@ Page({
       moodEmoji: mood.emoji,
       moodColor: mood.color,
       moodBg: mood.bg,
+      moodGradient: mood.bgGradient,
       tag: mood.tag,
       weatherId: weather.id,
       weatherName: weather.name,
       weatherEmoji: weather.emoji,
+      weatherTemp: weather.temp,
       quote: this.data.currentQuote,
       note: note,
       creator: {
@@ -211,6 +358,11 @@ Page({
       title: '今日卡片已生成 ✨',
       icon: 'success',
       duration: 1800
+    });
+
+    // 后台同步到服务端，便于分享给好友查看与评论
+    this.syncCurrentCard().catch((err) => {
+      console.warn('[card] 卡片同步失败，分享时将重试', err);
     });
 
     // 滚动展示
@@ -384,17 +536,30 @@ Page({
 
   // 微信好友分享配置
   onShareAppMessage() {
-    const card = this.data.generatedCard || {
-      id: 'demo',
-      moodEmoji: '☁️',
-      moodName: '放空摸鱼',
-      weatherEmoji: '⛅',
-      weatherName: '多云'
+    const card = this.data.generatedCard;
+    const fallback = {
+      title: '心晴解压岛 · 今天的我也在好好生活',
+      path: '/pages/index/index'
     };
+    if (!card) return fallback;
+
+    const title = `我今天的心情是【${card.moodEmoji} ${card.moodName}】，来拆开看我的心晴卡片，给我个拥抱吧~`;
+    const buildShare = (serverId) => ({
+      title,
+      path: `/pages/card-detail/card-detail?id=${encodeURIComponent(serverId)}&from=share`
+    });
+
+    if (card.serverId) return buildShare(card.serverId);
+
+    // 尚未同步：先同步再分享（微信要求 3 秒内 resolve，否则使用 fallback）
     return {
-      title: `我今天的心情是【${card.moodEmoji} ${card.moodName}】，来拆开看我的心晴卡片，给我个拥抱吧~`,
-      path: `/pages/card-detail/card-detail?id=${card.id}`,
-      imageUrl: ''
+      ...fallback,
+      promise: this.syncCurrentCard()
+        .then(buildShare)
+        .catch(() => {
+          wx.showToast({ title: '卡片同步失败，好友暂时无法查看', icon: 'none' });
+          return fallback;
+        })
     };
   },
 
@@ -403,7 +568,7 @@ Page({
     const card = this.data.generatedCard || { moodName: '放空摸鱼' };
     return {
       title: `今日心晴打卡 · ${card.moodName} | 心晴解压岛`,
-      query: `id=${card.id || ''}`
+      query: `id=${card.serverId || ''}`
     };
   }
 });

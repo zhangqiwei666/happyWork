@@ -1,7 +1,25 @@
 <!-- pages/card-detail/card-detail.wxml -->
 <view class="detail-container">
+  <!-- 加载中 / 加载失败 -->
+  <view wx:if="{{loadState === 'loading'}}" class="state-box">
+    <t-icon name="loading" size="56rpx" color="#0052D9" />
+    <text class="state-text">正在拆开心晴卡片...</text>
+  </view>
+  <view wx:elif="{{loadState === 'error'}}" class="state-box">
+    <text class="state-emoji">📭</text>
+    <text class="state-text">卡片不存在或已被删除</text>
+    <view class="state-btn press-scale" bindtap="goToHome">去记录我的今日心晴</view>
+  </view>
+
+  <block wx:else>
   <!-- 柔和背景光晕 -->
   <view class="ambient-glow" style="background: {{card.moodColor || '#0052D9'}}20;" />
+
+  <!-- 未同步提示（仅自己可见） -->
+  <view wx:if="{{mode === 'local'}}" class="local-tip">
+    <t-icon name="error-circle" size="32rpx" color="#ED7B2F" />
+    <text>卡片暂未同步到云端，好友暂时无法查看，下拉可重试</text>
+  </view>
 
   <!-- 顶部卡片主体 -->
   <view class="card-wrap">
@@ -47,53 +65,36 @@
     </view>
   </view>
 
+  <!-- 卡片主人：分享给好友 -->
+  <button wx:if="{{isOwner && mode === 'remote'}}" class="owner-share-btn press-scale" open-type="share">
+    <t-icon name="share" size="36rpx" color="#fff" />
+    <text>分享给好友，邀请 Ta 来留言</text>
+  </button>
+
   <!-- 快捷送温暖互动区（轻互动） -->
   <view class="reaction-section card-box">
     <view class="section-title">
-      <text class="title-text">给 Ta 送去一份温暖能量</text>
+      <text class="title-text">{{isOwner ? '收到的温暖能量' : '给 Ta 送去一份温暖能量'}}</text>
       <text class="title-tip">轻触即可传递一份关心</text>
     </view>
 
     <view class="reaction-grid">
-      <!-- 抱抱 -->
-      <view 
-        class="reaction-btn press-scale {{isReacted('hug') ? 'active' : ''}}" 
-        bindtap="onToggleReaction" 
-        data-type="hug"
-      >
+      <view class="reaction-btn press-scale {{reactedMap.hug ? 'active' : ''}}" bindtap="onToggleReaction" data-type="hug">
         <text class="react-emoji">🫂</text>
         <text class="react-name">抱抱你</text>
         <text class="react-count">{{reactions.hug || 0}}</text>
       </view>
-
-      <!-- 投喂奶茶 -->
-      <view 
-        class="reaction-btn press-scale {{isReacted('tea') ? 'active' : ''}}" 
-        bindtap="onToggleReaction" 
-        data-type="tea"
-      >
+      <view class="reaction-btn press-scale {{reactedMap.tea ? 'active' : ''}}" bindtap="onToggleReaction" data-type="tea">
         <text class="react-emoji">🧋</text>
         <text class="react-name">投喂甜茶</text>
         <text class="react-count">{{reactions.tea || 0}}</text>
       </view>
-
-      <!-- 摸摸头 -->
-      <view 
-        class="reaction-btn press-scale {{isReacted('pet') ? 'active' : ''}}" 
-        bindtap="onToggleReaction" 
-        data-type="pet"
-      >
+      <view class="reaction-btn press-scale {{reactedMap.pet ? 'active' : ''}}" bindtap="onToggleReaction" data-type="pet">
         <text class="react-emoji">🐱</text>
         <text class="react-name">摸摸头</text>
         <text class="react-count">{{reactions.pet || 0}}</text>
       </view>
-
-      <!-- 干杯打气 -->
-      <view 
-        class="reaction-btn press-scale {{isReacted('cheer') ? 'active' : ''}}" 
-        bindtap="onToggleReaction" 
-        data-type="cheer"
-      >
+      <view class="reaction-btn press-scale {{reactedMap.cheer ? 'active' : ''}}" bindtap="onToggleReaction" data-type="cheer">
         <text class="react-emoji">🍻</text>
         <text class="react-name">干杯打气</text>
         <text class="react-count">{{reactions.cheer || 0}}</text>
@@ -106,7 +107,7 @@
     <view class="comment-header">
       <view class="comment-title-group">
         <text class="section-title-text">暖心留言板</text>
-        <t-badge count="{{comments.length}}" />
+        <t-badge count="{{commentTotal}}" />
       </view>
       <text class="comment-header-tip">让文字抚平焦虑</text>
     </view>
@@ -135,6 +136,9 @@
             </view>
           </view>
         </block>
+        <view wx:if="{{mode === 'remote'}}" class="load-more-tip">
+          {{loadingMore ? '加载中...' : (hasMore ? '上拉加载更多' : '— 没有更多留言了 —')}}
+        </view>
       </block>
       <block wx:else>
         <view class="empty-comment">
@@ -145,8 +149,8 @@
     </view>
   </view>
 
-  <!-- 回到自己打卡入口 -->
-  <view class="bottom-go-home press-scale" bindtap="goToHome">
+  <!-- 回到自己打卡入口（好友视角） -->
+  <view wx:if="{{!isOwner}}" class="bottom-go-home press-scale" bindtap="goToHome">
     <t-icon name="edit" size="32rpx" color="#0052D9" />
     <text>我也去记录今日心晴与天气</text>
   </view>
@@ -154,19 +158,22 @@
   <!-- 底部固定吸底输入条 -->
   <view class="fixed-bottom-bar safe-bottom">
     <view class="input-bar-inner">
-      <input 
-        class="comment-input" 
-        value="{{commentInput}}" 
-        placeholder="写下你想对 Ta 说的暖心话..." 
+      <input
+        class="comment-input"
+        value="{{commentInput}}"
+        maxlength="200"
+        placeholder="{{isOwner ? '回复好友的暖心话...' : '写下你想对 Ta 说的暖心话...'}}"
         confirm-type="send"
+        bindfocus="onCommentFocus"
         bindinput="onCommentInput"
         bindconfirm="onSubmitComment"
       />
-      <t-button 
-        theme="primary" 
-        size="medium" 
+      <t-button
+        theme="primary"
+        size="medium"
         shape="round"
-        disabled="{{!commentInput || commentInput.trim().length === 0}}"
+        loading="{{sending}}"
+        disabled="{{!canSend || sending}}"
         custom-style="padding: 0 32rpx; font-weight: 600;"
         bindtap="onSubmitComment"
       >
@@ -174,6 +181,10 @@
       </t-button>
     </view>
   </view>
+  </block>
+
+  <!-- 登录弹窗（评论 / 互动前需登录） -->
+  <login-popup visible="{{loginVisible}}" bind:close="onCloseLogin" bind:success="onLoginSuccess" />
 
   <t-toast id="t-toast" />
   <view style="height: 140rpx;" />

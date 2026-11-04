@@ -360,3 +360,73 @@
   font-size: 26rpx;
   color: #333;
 }
+
+/* ===== 分享 / 加载状态 ===== */
+.state-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 240rpx;
+  gap: 24rpx;
+}
+
+.state-emoji {
+  font-size: 96rpx;
+}
+
+.state-text {
+  font-size: 28rpx;
+  color: #888;
+}
+
+.state-btn {
+  margin-top: 16rpx;
+  padding: 20rpx 48rpx;
+  border-radius: 999rpx;
+  background: #0052D9;
+  color: #fff;
+  font-size: 28rpx;
+}
+
+.local-tip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin: 0 0 20rpx;
+  padding: 16rpx 24rpx;
+  border-radius: 16rpx;
+  background: #FFF1E9;
+  color: #ED7B2F;
+  font-size: 24rpx;
+}
+
+.owner-share-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  width: 100% !important;
+  height: 88rpx;
+  margin: 0 0 24rpx;
+  padding: 0;
+  border-radius: 999rpx;
+  background: #07C160;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+  box-shadow: 0 8rpx 20rpx rgba(7, 193, 96, 0.25);
+}
+
+.owner-share-btn::after {
+  border: none;
+}
+
+.load-more-tip {
+  text-align: center;
+  font-size: 22rpx;
+  color: #AAA;
+  padding: 24rpx 0 8rpx;
+}

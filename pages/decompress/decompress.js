@@ -11,7 +11,15 @@ Page({
     woodFishCount: 0,
     vibrateEnabled: true,
     isStriking: false,
+    isHammerStriking: false,
     floatTexts: [],
+
+    // 敲击目标模式: 'lotus' (清心莲花) | 'custom' (自定义暴打照片)
+    targetType: 'lotus',
+    customImage: '',
+    targetName: '烦恼',
+    targetNameDialogVisible: false,
+    newTargetName: '',
 
     // 气泡膜
     bubbles: [],
@@ -28,11 +36,24 @@ Page({
 
   onLoad() {
     this.initStats();
+    this.initCustomTarget();
     this.initBubbles();
   },
 
   onShow() {
     this.initStats();
+  },
+
+  initCustomTarget() {
+    const savedImg = wx.getStorageSync('mood_custom_punch_img');
+    const savedName = wx.getStorageSync('mood_custom_punch_name');
+    if (savedImg) {
+      this.setData({
+        customImage: savedImg,
+        targetName: savedName || '烦恼小怪兽',
+        targetType: 'custom'
+      });
+    }
   },
 
   onUnload() {
@@ -63,16 +84,17 @@ Page({
     triggerHaptic('light');
   },
 
-  // 敲击木鱼
+  // 敲击木鱼 / 暴打自定义对象
   onHitWoodfish() {
     if (this.data.vibrateEnabled) {
-      triggerHaptic('medium');
+      triggerHaptic(this.data.targetType === 'custom' ? 'heavy' : 'medium');
     }
 
     const nextCount = this.data.woodFishCount + 1;
     updateDecompressStats('woodFish', 1);
 
-    const slogans = [
+    // 莲花清心词条 vs 暴打恶搞解压词条
+    const lotusSlogans = [
       '烦恼 -1',
       '焦虑 -1',
       '功德 +1',
@@ -81,37 +103,125 @@ Page({
       '压力清零 ✨',
       '疲惫退散 🌿'
     ];
+    const punchSlogans = [
+      `${this.data.targetName} 退散！💥`,
+      '吃我一锤！🔨',
+      '压力 -999 💢',
+      '看招！砰砰砰！🥊',
+      '暴富 +10000 💰',
+      '怒气消散 💨',
+      '心情大爽！🎉',
+      '不加班 +1 🏖️',
+      '甩锅退散 🛡️'
+    ];
+
+    const slogans = this.data.targetType === 'custom' ? punchSlogans : lotusSlogans;
     const randomText = slogans[Math.floor(Math.random() * slogans.length)];
     const textId = 'text_' + Date.now() + '_' + Math.random();
 
     // 随机微偏移
-    const randomX = Math.floor(Math.random() * 120) - 60;
-    const randomY = Math.floor(Math.random() * 40) - 20;
+    const randomX = Math.floor(Math.random() * 140) - 70;
+    const randomY = Math.floor(Math.random() * 50) - 25;
 
     const newFloat = {
       id: textId,
       text: randomText,
       x: randomX,
-      y: randomY
+      y: randomY,
+      isPunch: this.data.targetType === 'custom'
     };
 
     const currentFloats = [...this.data.floatTexts, newFloat];
 
+    // 触发锤子挥动动效与击打缩放
     this.setData({
       woodFishCount: nextCount,
       isStriking: true,
+      isHammerStriking: true,
       floatTexts: currentFloats
     });
 
     setTimeout(() => {
+      this.setData({ isHammerStriking: false });
+    }, 120);
+
+    setTimeout(() => {
       this.setData({ isStriking: false });
-    }, 100);
+    }, 150);
 
     // 0.9s 后移除飘字
     setTimeout(() => {
       const filtered = this.data.floatTexts.filter(item => item.id !== textId);
       this.setData({ floatTexts: filtered });
     }, 900);
+  },
+
+  // 切换回默认莲花模式
+  onResetToLotus() {
+    triggerHaptic('light');
+    this.setData({
+      targetType: 'lotus'
+    });
+    wx.showToast({ title: '已切回清心莲花 🪷', icon: 'none' });
+  },
+
+  // 上传/选择自定义照片进行暴打
+  onChooseCustomImage() {
+    triggerHaptic('light');
+    wx.chooseMedia({
+      count: 1,
+      mediaType: ['image'],
+      sourceType: ['album', 'camera'],
+      success: (res) => {
+        const tempPath = res.tempFiles[0].tempFilePath;
+        if (tempPath) {
+          this.setData({
+            customImage: tempPath,
+            targetType: 'custom',
+            targetNameDialogVisible: true,
+            newTargetName: this.data.targetName || '烦恼小怪兽'
+          });
+          wx.setStorageSync('mood_custom_punch_img', tempPath);
+          triggerHaptic('medium');
+        }
+      },
+      fail: (err) => {
+        if (!/cancel/i.test(err.errMsg)) {
+          wx.showToast({ title: '选择图片失败', icon: 'none' });
+        }
+      }
+    });
+  },
+
+  // 打开修改暴打对象名称弹窗
+  openTargetNameDialog() {
+    triggerHaptic('light');
+    this.setData({
+      targetNameDialogVisible: true,
+      newTargetName: this.data.targetName
+    });
+  },
+
+  onTargetNameInput(e) {
+    this.setData({
+      newTargetName: e.detail.value
+    });
+  },
+
+  onConfirmTargetName() {
+    const name = (this.data.newTargetName || '').trim() || '烦恼小怪兽';
+    this.setData({
+      targetName: name,
+      targetNameDialogVisible: false
+    });
+    wx.setStorageSync('mood_custom_punch_name', name);
+    wx.showToast({ title: `已锁定暴打目标：${name}！`, icon: 'none' });
+  },
+
+  onCancelTargetName() {
+    this.setData({
+      targetNameDialogVisible: false
+    });
   },
 
   // 初始化 30 个气泡

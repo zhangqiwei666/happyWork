@@ -1,18 +1,18 @@
 // utils/auth.js
 // 登录态管理：微信快捷登录（wx.login + 手机号快速验证组件）
 import { getUserInfo, saveUserInfo } from './storage';
-
-const AUTH_KEY = 'mood_auth_info';
+import { AUTH_KEY } from './config';
+import { wxLoginApi } from '../api/user';
 
 /**
- * 后端登录接口地址。
- * - 留空：使用本地模拟登录（便于开发调试，不会真正换取 openid / 手机号）。
- * - 填写后：会以 POST { loginCode, phoneCode } 调用该接口，
+ * 是否调用后端登录接口（接口地址见 api/user.js → wxLoginApi）。
+ * - false：使用本地模拟登录（便于后端未就绪时开发调试）。
+ * - true：以 POST { loginCode, phoneCode } 调用后端，
  *   期望返回 { token, openid, phone, nickName?, avatarUrl? }。
  *   后端需使用 loginCode 调用 code2Session 换取 openid，
  *   使用 phoneCode 调用 getuserphonenumber 换取手机号。
  */
-const LOGIN_API = '';
+const USE_SERVER_LOGIN = false;
 
 export function getAuthInfo() {
   return wx.getStorageSync(AUTH_KEY) || null;
@@ -36,24 +36,6 @@ function wxLogin() {
   });
 }
 
-function requestServer(data) {
-  return new Promise((resolve, reject) => {
-    wx.request({
-      url: LOGIN_API,
-      method: 'POST',
-      data,
-      success: (res) => {
-        if (res.statusCode === 200 && res.data && res.data.token) {
-          resolve(res.data);
-        } else {
-          reject(new Error('登录接口返回异常'));
-        }
-      },
-      fail: reject
-    });
-  });
-}
-
 function maskPhone(phone) {
   if (!phone || phone.length < 7) return phone || '';
   return phone.slice(0, 3) + '****' + phone.slice(-4);
@@ -67,8 +49,9 @@ export async function loginWithWechat(phoneCode) {
   const loginCode = await wxLogin();
 
   let result;
-  if (LOGIN_API) {
-    result = await requestServer({ loginCode, phoneCode });
+  if (USE_SERVER_LOGIN) {
+    result = await wxLoginApi({ loginCode, phoneCode });
+    if (!result || !result.token) throw new Error('登录接口未返回 token');
   } else {
     // 本地模拟：仅用于开发调试，正式上线请配置 LOGIN_API
     result = {

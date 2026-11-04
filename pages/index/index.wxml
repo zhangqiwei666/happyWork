@@ -4,20 +4,28 @@
   <view class="ambient-glow" style="background: {{currentMood.bgGradient}};" />
 
   <!-- 顶部：天气与氛围感知栏 -->
-  <view class="weather-bar press-scale" bindtap="openWeatherPicker">
+  <view class="weather-bar" bindtap="openWeatherPicker">
     <view class="weather-left">
-      <text class="weather-icon">{{currentWeather.emoji}}</text>
+      <view class="weather-icon-box">
+        <image wx:if="{{currentWeather.iconUrl}}" class="weather-icon-img" src="{{currentWeather.iconUrl}}" mode="aspectFit" />
+        <text wx:else class="weather-icon">{{currentWeather.emoji}}</text>
+      </view>
       <view class="weather-text-wrap">
-        <view class="weather-top">
+        <view class="weather-row-city">
+          <view class="weather-city-badge">
+            <text class="city-icon">📍</text>
+            <text class="city-name">{{currentCityName || '当前城市'}}</text>
+          </view>
           <text class="weather-name">{{currentWeather.name}}</text>
           <text class="weather-temp">{{currentWeather.temp}}</text>
+          <text wx:if="{{currentWeather.feelsLike}}" class="weather-feels">体感 {{currentWeather.feelsLike}}</text>
         </view>
-        <text class="weather-desc">{{currentWeather.desc}}</text>
+        <view class="weather-desc">{{currentWeather.desc}}</view>
       </view>
     </view>
     <view class="weather-switch-btn">
-      <text class="switch-tip">切换天气</text>
-      <t-icon name="chevron-right" size="32rpx" color="#999" />
+      <text class="switch-tip">切换</text>
+      <t-icon name="chevron-right" size="28rpx" color="#999" />
     </view>
   </view>
 
@@ -177,14 +185,97 @@
     </view>
   </view>
 
-  <!-- 天气氛围切换弹窗 -->
+  <!-- 天气与城市选择弹窗 -->
   <t-popup visible="{{weatherPickerVisible}}" placement="bottom" bind:visible-change="onCloseWeatherPicker">
     <view class="weather-picker-panel">
+      <!-- 弹窗顶栏 -->
       <view class="picker-header">
-        <text class="picker-title">选择今日天气与氛围感</text>
+        <view class="picker-tabs">
+          <view class="picker-tab {{activeWeatherTab === 'city' ? 'active' : ''}}" bindtap="onSwitchWeatherTab" data-tab="city">
+            切换城市
+          </view>
+          <view class="picker-tab {{activeWeatherTab === 'mood' ? 'active' : ''}}" bindtap="onSwitchWeatherTab" data-tab="mood">
+            手动微调天气
+          </view>
+        </view>
         <t-icon name="close" size="40rpx" color="#999" bindtap="onCloseWeatherPicker" />
       </view>
-      <view class="weather-list">
+
+      <!-- TAB 1: 城市选择与模糊搜索 -->
+      <view wx:if="{{activeWeatherTab === 'city'}}" class="city-picker-content">
+        <!-- 搜索输入框 -->
+        <view class="city-search-box">
+          <t-icon name="search" size="32rpx" color="#999" />
+          <input
+            class="city-search-input"
+            value="{{citySearchKeyword}}"
+            placeholder="搜索城市（中文或拼音，如 深圳 / bj）"
+            confirm-type="search"
+            bindinput="onCitySearchInput"
+          />
+          <t-icon wx:if="{{citySearchKeyword}}" name="close-circle-filled" size="32rpx" color="#ccc" bindtap="onClearCitySearch" />
+        </view>
+
+        <!-- 当前定位与定位刷新 -->
+        <view class="current-loc-bar">
+          <view class="loc-tag">
+            <text class="loc-icon">📍</text>
+            <text class="loc-text">当前城市：{{currentCityName || '获取中...'}}</text>
+          </view>
+          <view class="relocate-btn press-scale" bindtap="onReLocate">
+            <t-icon name="refresh" size="28rpx" color="#0052D9" />
+            <text>重新定位</text>
+          </view>
+        </view>
+
+        <!-- 搜索结果列表 -->
+        <scroll-view wx:if="{{citySearchKeyword && citySearchResults.length > 0}}" scroll-y class="search-result-list">
+          <block wx:for="{{citySearchResults}}" wx:key="districtCode">
+            <view class="search-result-item press-scale" bindtap="onSelectCityItem" data-city="{{item}}">
+              <view class="res-city-name">{{item.name}}</view>
+              <view class="res-prov-name">{{item.provinceName}}</view>
+            </view>
+          </block>
+        </scroll-view>
+
+        <!-- 搜索无结果 -->
+        <view wx:elif="{{citySearchKeyword && citySearchResults.length === 0}}" class="search-empty">
+          <text>未找到相关城市，请尝试输入其它拼音或城市名</text>
+        </view>
+
+        <!-- 默认展示：省市两级联动选择 -->
+        <view wx:else class="prov-city-cascade">
+          <!-- 左侧省份列表 -->
+          <scroll-view scroll-y class="prov-col">
+            <block wx:for="{{provincesList}}" wx:key="name">
+              <view
+                class="prov-item {{selectedProvIndex === index ? 'active' : ''}}"
+                bindtap="onSelectProvince"
+                data-index="{{index}}"
+              >
+                <text>{{item.name}}</text>
+              </view>
+            </block>
+          </scroll-view>
+
+          <!-- 右侧下辖城市列表 -->
+          <scroll-view scroll-y class="city-col">
+            <block wx:for="{{currentProvCities}}" wx:key="districtCode">
+              <view
+                class="city-item press-scale {{currentCityName === item.name ? 'active' : ''}}"
+                bindtap="onSelectCityItem"
+                data-city="{{item}}"
+              >
+                <text class="c-name">{{item.name}}</text>
+                <t-icon wx:if="{{currentCityName === item.name}}" name="check" size="32rpx" color="#0052D9" />
+              </view>
+            </block>
+          </scroll-view>
+        </view>
+      </view>
+
+      <!-- TAB 2: 手动自选天气氛围 -->
+      <view wx:else class="weather-list">
         <block wx:for="{{weatherList}}" wx:key="id">
           <view 
             class="weather-option press-scale {{currentWeather.id === item.id ? 'active' : ''}}"

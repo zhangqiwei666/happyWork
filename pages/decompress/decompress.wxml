@@ -13,8 +13,8 @@
   <view wx:if="{{currentTab === 'woodfish'}}" class="tab-content woodfish-content">
     <view class="woodfish-header">
       <view class="count-display">
-        <text class="count-label">今日清心敲击</text>
-        <text class="count-num">{{woodFishCount}}</text>
+        <text class="count-label">{{targetType === 'custom' ? '今日暴打解压' : '今日清心敲击'}}</text>
+        <text class="count-num {{targetType === 'custom' ? 'strike-num' : ''}}">{{woodFishCount}}</text>
       </view>
       <view class="sound-toggle press-scale" bindtap="toggleVibrate">
         <t-icon name="{{vibrateEnabled ? 'check-circle' : 'close-circle'}}" size="32rpx" color="{{vibrateEnabled ? '#0052D9' : '#999'}}" />
@@ -22,30 +22,68 @@
       </view>
     </view>
 
+    <!-- 木鱼/暴打 模式工具栏 -->
+    <view class="woodfish-mode-bar">
+      <view class="mode-tag {{targetType === 'lotus' ? 'active' : ''}}" bindtap="onResetToLotus">
+        <text class="tag-icon">🪷</text>
+        <text class="tag-text">清心莲花</text>
+      </view>
+      <view class="mode-tag {{targetType === 'custom' ? 'active' : ''}}" bindtap="onChooseCustomImage">
+        <text class="tag-icon">🥊</text>
+        <text class="tag-text">{{customImage ? '更换暴打对象' : '上传照片暴打'}}</text>
+      </view>
+      <view wx:if="{{targetType === 'custom'}}" class="mode-tag-name press-scale" bindtap="openTargetNameDialog">
+        <text class="target-name-text">🏷️ {{targetName}}</text>
+        <t-icon name="edit" size="24rpx" color="#666" />
+      </view>
+    </view>
+
     <!-- 木鱼主体与敲击动效 -->
-    <view class="woodfish-stage">
+    <view class="woodfish-stage" bindtap="onHitWoodfish">
+      <!-- 锤子动效 -->
+      <view class="hammer-wrapper {{isHammerStriking ? 'hitting' : ''}}">
+        <text class="hammer-emoji">🔨</text>
+      </view>
+
+      <!-- 暴击星光/火花 -->
+      <view wx:if="{{isStriking}}" class="spark-burst">
+        <text class="spark-icon">{{targetType === 'custom' ? '💥' : '✨'}}</text>
+      </view>
+
       <!-- 浮动文字飘出动效列表 -->
       <block wx:for="{{floatTexts}}" wx:key="id">
         <text 
-          class="float-text" 
+          class="float-text {{item.isPunch ? 'punch-text' : ''}}" 
           style="left: {{item.x}}rpx; top: {{item.y}}rpx; animation-duration: 0.9s;"
         >
           {{item.text}}
         </text>
       </block>
 
-      <!-- 木鱼本身 -->
+      <!-- 敲击/暴打主体 -->
       <view 
-        class="woodfish-circle press-scale {{isStriking ? 'striking' : ''}}" 
-        bindtap="onHitWoodfish"
+        class="woodfish-circle press-scale {{isStriking ? 'striking' : ''}} {{targetType === 'custom' ? 'custom-target-circle' : ''}}"
       >
-        <text class="woodfish-icon">🪷</text>
-        <text class="hit-tip">轻触敲击</text>
+        <!-- 自定义图片模式 -->
+        <block wx:if="{{targetType === 'custom' && customImage}}">
+          <image class="target-custom-image" src="{{customImage}}" mode="aspectFill" />
+          <view class="target-name-badge">
+            <text>{{targetName}}</text>
+          </view>
+          <text class="hit-tip hit-tip-punch">狠狠砸！</text>
+        </block>
+
+        <!-- 默认莲花模式 -->
+        <block wx:else>
+          <text class="woodfish-icon">🪷</text>
+          <text class="hit-tip">轻触敲击</text>
+        </block>
       </view>
     </view>
 
     <view class="woodfish-footer-tip">
-      <text>每一次敲击，都是在向烦恼告别</text>
+      <text wx:if="{{targetType === 'custom'}}">打是亲骂是爱，敲碎烦恼、怒气全消！🥊</text>
+      <text wx:else>每一次敲击，都是在向烦恼告别</text>
     </view>
   </view>
 
@@ -114,5 +152,26 @@
   </view>
 
   <t-toast id="t-toast" />
+
+  <!-- 自定义暴打对象昵称弹窗 -->
+  <t-dialog
+    visible="{{targetNameDialogVisible}}"
+    title="设置暴打对象标签"
+    confirm-btn="确定"
+    cancel-btn="取消"
+    bind:confirm="onConfirmTargetName"
+    bind:cancel="onCancelTargetName"
+  >
+    <view slot="content" class="target-name-input-wrap">
+      <input
+        class="target-name-input"
+        value="{{newTargetName}}"
+        placeholder="例如：万恶星期一 / 甲方大大 / 烦恼小怪兽"
+        maxlength="12"
+        bindinput="onTargetNameInput"
+      />
+    </view>
+  </t-dialog>
+
   <view class="safe-bottom" />
 </view>

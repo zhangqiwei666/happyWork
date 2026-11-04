@@ -30,58 +30,134 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(20rpx);
-  padding: 24rpx 32rpx;
+  padding: 22rpx 28rpx;
   border-radius: var(--td-radius-large);
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.04);
-  border: 1rpx solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 6rpx 24rpx rgba(0, 0, 0, 0.05);
+  border: 1rpx solid rgba(255, 255, 255, 0.95);
   margin-bottom: 32rpx;
+  gap: 16rpx;
 }
 
 .weather-left {
   display: flex;
   align-items: center;
+  flex: 1;
+  min-width: 0;
+  gap: 18rpx;
+}
+
+.weather-icon-box {
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 20rpx;
+  background: #F4F7FC;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.weather-icon-img {
+  width: 60rpx;
+  height: 60rpx;
+  display: block;
 }
 
 .weather-icon {
-  font-size: 52rpx;
-  margin-right: 20rpx;
+  font-size: 46rpx;
+  line-height: 1;
 }
 
-.weather-top {
+.weather-text-wrap {
+  flex: 1;
+  min-width: 0;
   display: flex;
-  align-items: baseline;
-  gap: 12rpx;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.weather-row-city {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 10rpx;
+  line-height: 1.2;
+}
+
+.weather-city-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4rpx;
+  background: rgba(0, 82, 217, 0.08);
+  padding: 4rpx 10rpx;
+  border-radius: 8rpx;
+  flex-shrink: 0;
+}
+
+.weather-city-badge .city-icon {
+  font-size: 20rpx;
+}
+
+.weather-city-badge .city-name {
+  font-size: 24rpx;
+  font-weight: 700;
+  color: #0052D9;
+  white-space: nowrap;
 }
 
 .weather-name {
-  font-size: 30rpx;
+  font-size: 26rpx;
   font-weight: 600;
   color: #222;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .weather-temp {
   font-size: 26rpx;
-  color: #666;
+  color: #555;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.weather-feels {
+  font-size: 20rpx;
+  color: #ED7B2F;
+  background: rgba(237, 123, 47, 0.12);
+  padding: 2rpx 8rpx;
+  border-radius: 6rpx;
+  white-space: nowrap;
+  flex-shrink: 0;
   font-weight: 500;
 }
 
 .weather-desc {
   font-size: 22rpx;
   color: #888;
-  margin-top: 4rpx;
+  margin-top: 6rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .weather-switch-btn {
   display: flex;
   align-items: center;
-  gap: 6rpx;
+  gap: 2rpx;
+  flex-shrink: 0;
+  padding: 8rpx 12rpx;
+  border-radius: 999rpx;
+  background: #F5F7FA;
 }
 
 .switch-tip {
-  font-size: 24rpx;
-  color: #888;
+  font-size: 22rpx;
+  color: #666;
+  font-weight: 500;
 }
 
 /* 区域标题 */
@@ -513,4 +589,178 @@
   top: -9999px;
   width: 600px;
   height: 900px;
+}
+
+/* 弹窗 Tabs */
+.picker-tabs {
+  display: flex;
+  gap: 24rpx;
+}
+
+.picker-tab {
+  font-size: 30rpx;
+  color: #888;
+  padding-bottom: 8rpx;
+  position: relative;
+  font-weight: 500;
+}
+
+.picker-tab.active {
+  color: #0052D9;
+  font-weight: 700;
+}
+
+.picker-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  width: 80%;
+  height: 4rpx;
+  background: #0052D9;
+  border-radius: 2rpx;
+}
+
+/* 城市选择面板 */
+.city-picker-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.city-search-box {
+  display: flex;
+  align-items: center;
+  background: #F4F5F8;
+  border-radius: 999rpx;
+  padding: 16rpx 24rpx;
+  gap: 12rpx;
+  margin-bottom: 20rpx;
+}
+
+.city-search-input {
+  flex: 1;
+  font-size: 26rpx;
+  color: #222;
+}
+
+.current-loc-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12rpx 4rpx 20rpx;
+  border-bottom: 1rpx solid #F0F0F0;
+  margin-bottom: 16rpx;
+}
+
+.loc-tag {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.loc-text {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.relocate-btn {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  font-size: 24rpx;
+  color: #0052D9;
+  padding: 8rpx 16rpx;
+  border-radius: 999rpx;
+  background: #ECF2FE;
+}
+
+/* 省市二级联动 */
+.prov-city-cascade {
+  display: flex;
+  height: 480rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+  background: #FAFBFD;
+}
+
+.prov-col {
+  width: 220rpx;
+  height: 100%;
+  background: #F3F4F7;
+  border-right: 1rpx solid #EAECEF;
+}
+
+.prov-item {
+  padding: 24rpx 20rpx;
+  font-size: 26rpx;
+  color: #666;
+  text-align: center;
+}
+
+.prov-item.active {
+  background: #FAFBFD;
+  color: #0052D9;
+  font-weight: 700;
+  border-left: 6rpx solid #0052D9;
+}
+
+.city-col {
+  flex: 1;
+  height: 100%;
+  padding: 0 16rpx;
+  box-sizing: border-box;
+}
+
+.city-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 16rpx;
+  border-bottom: 1rpx solid #F0F2F5;
+}
+
+.city-item.active .c-name {
+  color: #0052D9;
+  font-weight: 700;
+}
+
+.c-name {
+  font-size: 28rpx;
+  color: #333;
+}
+
+/* 搜索结果 */
+.search-result-list {
+  height: 480rpx;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 16rpx;
+  border-bottom: 1rpx solid #F0F2F5;
+}
+
+.res-city-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #222;
+}
+
+.res-prov-name {
+  font-size: 22rpx;
+  color: #999;
+}
+
+.search-empty {
+  height: 300rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  color: #999;
+  text-align: center;
+  padding: 0 40rpx;
 }

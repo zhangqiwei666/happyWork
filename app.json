@@ -45,6 +45,11 @@
       }
     ]
   },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于展示当地今日实时天气与体感温度"
+    }
+  },
   "usingComponents": {
     "t-button": "tdesign-miniprogram/button/button",
     "t-icon": "tdesign-miniprogram/icon/icon",

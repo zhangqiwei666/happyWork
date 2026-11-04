@@ -178,6 +178,23 @@ export function getCardById(cardId) {
   return cards[0] || null;
 }
 
+// 精确查找本地卡片（匹配本地 id 或服务端 serverId，不做兜底）
+export function findLocalCard(id) {
+  if (!id) return null;
+  const cards = wx.getStorageSync(STORAGE_KEYS.CARDS) || [];
+  return cards.find(c => c.id === id || c.serverId === id) || null;
+}
+
+// 卡片同步到服务端后，记录服务端 id
+export function setCardServerId(localId, serverId) {
+  const cards = getAllCards();
+  const card = cards.find(c => c.id === localId);
+  if (!card) return null;
+  card.serverId = serverId;
+  wx.setStorageSync(STORAGE_KEYS.CARDS, cards);
+  return card;
+}
+
 // 获取卡片评论列表
 export function getCommentsByCardId(cardId) {
   const map = wx.getStorageSync(STORAGE_KEYS.COMMENTS) || {};

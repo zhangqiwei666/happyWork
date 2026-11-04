@@ -1,0 +1,69 @@
+<!-- components/login-popup/login-popup.wxml -->
+<!-- 登录弹窗 -->
+<view wx:if="{{visible}}" class="lp-mask" catchtouchmove="noop">
+  <view class="lp-sheet safe-area">
+    <view class="lp-close" bindtap="onClose">
+      <t-icon name="close" size="40rpx" color="#999" />
+    </view>
+
+    <image class="lp-logo" src="/images/app-logo.svg" mode="aspectFit" />
+    <view class="lp-title">欢迎来到心晴解压岛</view>
+    <view class="lp-desc">登录后可同步你的心情卡片、足迹与解压成就</view>
+
+    <!-- 未同意隐私：先弹隐私提示 -->
+    <button
+      wx:if="{{needPrivacy}}"
+      class="lp-btn lp-btn-primary"
+      hover-class="lp-btn-hover"
+      bindtap="onQuickLoginTap"
+    >
+      <t-icon name="logo-wechat-stroke" size="40rpx" color="#fff" />
+      <text class="lp-btn-text">微信快捷登录</text>
+    </button>
+
+    <!-- 已同意隐私：直接调用官方手机号快速验证组件 -->
+    <button
+      wx:else
+      class="lp-btn lp-btn-primary"
+      hover-class="lp-btn-hover"
+      open-type="getPhoneNumber"
+      disabled="{{loading}}"
+      bindgetphonenumber="onGetPhoneNumber"
+    >
+      <t-icon name="logo-wechat-stroke" size="40rpx" color="#fff" />
+      <text class="lp-btn-text">微信快捷登录</text>
+    </button>
+
+    <view class="lp-skip" bindtap="onClose">暂不登录，先逛逛</view>
+
+    <view class="lp-agreement">
+      登录即表示同意
+      <text class="lp-link" catchtap="onOpenPrivacyContract">{{privacyContractName}}</text>
+    </view>
+  </view>
+</view>
+
+<!-- 隐私保护提示（官方 agreePrivacyAuthorization） -->
+<view wx:if="{{privacyVisible}}" class="pv-mask" catchtouchmove="noop">
+  <view class="pv-dialog">
+    <view class="pv-title">用户隐私保护提示</view>
+    <view class="pv-content">
+      感谢您使用心晴解压岛！在使用微信快捷登录前，请仔细阅读
+      <text class="lp-link" bindtap="onOpenPrivacyContract">{{privacyContractName}}</text>
+      。为完成登录，我们需要获取您的微信登录凭证及手机号码，用于创建账号与同步数据。我们将严格保护您的个人信息安全。
+    </view>
+    <view class="pv-content pv-sub">如您同意，请点击「同意并登录」开始使用。</view>
+    <view class="pv-actions">
+      <button class="pv-btn pv-btn-cancel" hover-class="lp-btn-hover" bindtap="onDisagreePrivacy">拒绝</button>
+      <button
+        id="privacy-agree-btn"
+        class="pv-btn pv-btn-agree"
+        hover-class="lp-btn-hover"
+        open-type="getPhoneNumber|agreePrivacyAuthorization"
+        bindagreeprivacyauthorization="onAgreePrivacy"
+        bindgetphonenumber="onGetPhoneNumber"
+      >同意并登录</button>
+    </view>
+  </view>
+</view>
+

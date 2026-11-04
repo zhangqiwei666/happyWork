@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "解压小憩",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "t-tabs": "tdesign-miniprogram/tabs/tabs",
+    "t-tab-panel": "tdesign-miniprogram/tab-panel/tab-panel"
+  }
+}

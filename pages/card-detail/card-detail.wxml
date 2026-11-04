@@ -1,0 +1,180 @@
+<!-- pages/card-detail/card-detail.wxml -->
+<view class="detail-container">
+  <!-- 柔和背景光晕 -->
+  <view class="ambient-glow" style="background: {{card.moodColor || '#0052D9'}}20;" />
+
+  <!-- 顶部卡片主体 -->
+  <view class="card-wrap">
+    <view class="mood-card-preview" style="background: {{card.moodGradient || '#FFF'}};">
+      <!-- 卡片头部：作者与天气 -->
+      <view class="card-header">
+        <view class="author-info">
+          <t-avatar image="{{card.creator.avatarUrl}}" size="medium" />
+          <view class="author-text">
+            <view class="author-name">{{card.creator.nickName}}</view>
+            <view class="card-time">{{card.dateStr}} {{card.weekDay}}</view>
+          </view>
+        </view>
+        <view class="weather-badge">
+          <text>{{card.weatherEmoji}} {{card.weatherName}}</text>
+        </view>
+      </view>
+
+      <!-- 情绪状态大焦点 -->
+      <view class="mood-core">
+        <text class="mood-emoji float-anim">{{card.moodEmoji}}</text>
+        <view class="mood-info">
+          <view class="mood-name">{{card.moodName}}</view>
+          <view class="mood-subtitle">今日情绪状态 · 天气 {{card.weatherTemp}}</view>
+        </view>
+      </view>
+
+      <!-- 治愈金句 -->
+      <view class="quote-box">
+        <text class="quote-text">“{{card.quote}}”</text>
+      </view>
+
+      <!-- 用户碎碎念 -->
+      <view wx:if="{{card.note}}" class="note-box">
+        <view class="note-title">✦ 悄悄话碎碎念：</view>
+        <view class="note-content">{{card.note}}</view>
+      </view>
+
+      <!-- 卡片尾部 -->
+      <view class="card-footer">
+        <text class="footer-tag">来自心晴解压岛 · 情绪分享</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷送温暖互动区（轻互动） -->
+  <view class="reaction-section card-box">
+    <view class="section-title">
+      <text class="title-text">给 Ta 送去一份温暖能量</text>
+      <text class="title-tip">轻触即可传递一份关心</text>
+    </view>
+
+    <view class="reaction-grid">
+      <!-- 抱抱 -->
+      <view 
+        class="reaction-btn press-scale {{isReacted('hug') ? 'active' : ''}}" 
+        bindtap="onToggleReaction" 
+        data-type="hug"
+      >
+        <text class="react-emoji">🫂</text>
+        <text class="react-name">抱抱你</text>
+        <text class="react-count">{{reactions.hug || 0}}</text>
+      </view>
+
+      <!-- 投喂奶茶 -->
+      <view 
+        class="reaction-btn press-scale {{isReacted('tea') ? 'active' : ''}}" 
+        bindtap="onToggleReaction" 
+        data-type="tea"
+      >
+        <text class="react-emoji">🧋</text>
+        <text class="react-name">投喂甜茶</text>
+        <text class="react-count">{{reactions.tea || 0}}</text>
+      </view>
+
+      <!-- 摸摸头 -->
+      <view 
+        class="reaction-btn press-scale {{isReacted('pet') ? 'active' : ''}}" 
+        bindtap="onToggleReaction" 
+        data-type="pet"
+      >
+        <text class="react-emoji">🐱</text>
+        <text class="react-name">摸摸头</text>
+        <text class="react-count">{{reactions.pet || 0}}</text>
+      </view>
+
+      <!-- 干杯打气 -->
+      <view 
+        class="reaction-btn press-scale {{isReacted('cheer') ? 'active' : ''}}" 
+        bindtap="onToggleReaction" 
+        data-type="cheer"
+      >
+        <text class="react-emoji">🍻</text>
+        <text class="react-name">干杯打气</text>
+        <text class="react-count">{{reactions.cheer || 0}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 好友文字留言板 -->
+  <view class="comment-section card-box">
+    <view class="comment-header">
+      <view class="comment-title-group">
+        <text class="section-title-text">暖心留言板</text>
+        <t-badge count="{{comments.length}}" />
+      </view>
+      <text class="comment-header-tip">让文字抚平焦虑</text>
+    </view>
+
+    <!-- 快捷暖心词条 -->
+    <view class="quick-tags-row">
+      <block wx:for="{{quickTags}}" wx:key="*this">
+        <view class="quick-tag press-scale" bindtap="onSelectQuickTag" data-tag="{{item}}">
+          <text>{{item}}</text>
+        </view>
+      </block>
+    </view>
+
+    <!-- 评论列表 -->
+    <view class="comment-list">
+      <block wx:if="{{comments.length > 0}}">
+        <block wx:for="{{comments}}" wx:key="id">
+          <view class="comment-item">
+            <t-avatar image="{{item.userAvatar}}" size="small" />
+            <view class="comment-body">
+              <view class="comment-user-row">
+                <text class="comment-username">{{item.userName}}</text>
+                <text class="comment-time">{{item.createTime}}</text>
+              </view>
+              <view class="comment-content">{{item.content}}</view>
+            </view>
+          </view>
+        </block>
+      </block>
+      <block wx:else>
+        <view class="empty-comment">
+          <text class="empty-emoji">💌</text>
+          <text class="empty-text">还没有人留言，快在下方写下一句暖心关怀吧~</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 回到自己打卡入口 -->
+  <view class="bottom-go-home press-scale" bindtap="goToHome">
+    <t-icon name="edit" size="32rpx" color="#0052D9" />
+    <text>我也去记录今日心晴与天气</text>
+  </view>
+
+  <!-- 底部固定吸底输入条 -->
+  <view class="fixed-bottom-bar safe-bottom">
+    <view class="input-bar-inner">
+      <input 
+        class="comment-input" 
+        value="{{commentInput}}" 
+        placeholder="写下你想对 Ta 说的暖心话..." 
+        confirm-type="send"
+        bindinput="onCommentInput"
+        bindconfirm="onSubmitComment"
+      />
+      <t-button 
+        theme="primary" 
+        size="medium" 
+        shape="round"
+        disabled="{{!commentInput || commentInput.trim().length === 0}}"
+        custom-style="padding: 0 32rpx; font-weight: 600;"
+        bindtap="onSubmitComment"
+      >
+        发送
+      </t-button>
+    </view>
+  </view>
+
+  <t-toast id="t-toast" />
+  <view style="height: 140rpx;" />
+</view>

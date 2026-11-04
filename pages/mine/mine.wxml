@@ -1,0 +1,85 @@
+<!-- pages/mine/mine.wxml -->
+<view class="mine-container">
+  <!-- 顶部个人资料卡片 -->
+  <view class="profile-card card-box">
+    <view class="profile-top">
+      <t-avatar image="{{userInfo.avatarUrl}}" size="large" />
+      <view class="profile-info" wx:if="{{isLogin}}">
+        <view class="profile-name-row" bindtap="openEditNameDialog">
+          <text class="profile-name">{{userInfo.nickName}}</text>
+          <t-icon name="edit" size="28rpx" color="#666" />
+        </view>
+        <text class="profile-id">{{authInfo.phoneMasked ? '手机号：' + authInfo.phoneMasked : 'ID: ' + userInfo.id + ' · 今日心晴已守护'}}</text>
+      </view>
+      <view class="profile-info" wx:else bindtap="openLogin">
+        <text class="profile-name">点击登录</text>
+        <text class="profile-id">登录后同步心情卡片与解压成就</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 解压战绩看板 -->
+  <view class="stats-card card-box">
+    <view class="stats-header">
+      <text class="stats-title">解压减负成就</text>
+      <text class="stats-tip">让每一次压力都有释放的出口</text>
+    </view>
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-icon">🪵</text>
+        <text class="stat-val">{{decompressStats.woodFishCount}}</text>
+        <text class="stat-name">木鱼清心</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-icon">🫧</text>
+        <text class="stat-val">{{decompressStats.bubbleCount}}</text>
+        <text class="stat-name">泡泡捏碎</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-icon">🌬️</text>
+        <text class="stat-val">{{decompressStats.breathCount}}</text>
+        <text class="stat-name">深呼吸冥想</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能设置列表 -->
+  <view class="settings-group card-box">
+    <t-cell-group>
+      <t-cell title="触感微震动反馈" description="在敲木鱼、捏泡泡、签到时提供物理触感">
+        <t-switch slot="note" value="{{hapticEnabled}}" bind:change="onToggleHaptic" />
+      </t-cell>
+      <t-cell title="关于心晴解压小程序" arrow hover bindtap="onShowAbout" />
+      <t-cell title="重置本地体验数据" arrow hover bindtap="onResetData" />
+      <t-cell wx:if="{{isLogin}}" title="退出登录" arrow hover bindtap="onLogout" />
+    </t-cell-group>
+  </view>
+
+  <!-- 底部说明 -->
+  <view class="footer-brand">
+    <text>基于 腾讯 TDesign 微信小程序原生组件库 倾心打造</text>
+  </view>
+
+  <!-- 修改昵称弹窗 -->
+  <t-dialog
+    visible="{{editNameVisible}}"
+    title="修改你的解压昵称"
+    confirm-btn="确认保存"
+    cancel-btn="取消"
+    bind:confirm="onConfirmEditName"
+    bind:cancel="onCancelEditName"
+  >
+    <view slot="content" class="dialog-input-wrap">
+      <t-input
+        value="{{newNickName}}"
+        placeholder="请输入新的昵称"
+        bind:change="onNickNameChange"
+      />
+    </view>
+  </t-dialog>
+
+  <login-popup visible="{{loginVisible}}" bind:close="onCloseLogin" bind:success="onLoginSuccess" />
+
+  <t-toast id="t-toast" />
+  <view class="safe-bottom" />
+</view>

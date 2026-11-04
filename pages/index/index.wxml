@@ -1,0 +1,215 @@
+<!-- pages/index/index.wxml -->
+<view class="container" style="--mood-theme: {{currentMood.color}};">
+  <!-- 柔和动态氛围光晕背景 -->
+  <view class="ambient-glow" style="background: {{currentMood.bgGradient}};" />
+
+  <!-- 顶部：天气与氛围感知栏 -->
+  <view class="weather-bar press-scale" bindtap="openWeatherPicker">
+    <view class="weather-left">
+      <text class="weather-icon">{{currentWeather.emoji}}</text>
+      <view class="weather-text-wrap">
+        <view class="weather-top">
+          <text class="weather-name">{{currentWeather.name}}</text>
+          <text class="weather-temp">{{currentWeather.temp}}</text>
+        </view>
+        <text class="weather-desc">{{currentWeather.desc}}</text>
+      </view>
+    </view>
+    <view class="weather-switch-btn">
+      <text class="switch-tip">切换天气</text>
+      <t-icon name="chevron-right" size="32rpx" color="#999" />
+    </view>
+  </view>
+
+  <!-- 情绪选择引导标题 -->
+  <view class="section-header">
+    <view class="section-title">此刻的心情状态</view>
+    <view class="section-subtitle">倾听内心的声音，选择你今日的情绪光谱</view>
+  </view>
+
+  <!-- 情绪胶囊选择列表 -->
+  <view class="mood-grid">
+    <block wx:for="{{moodList}}" wx:key="id">
+      <view 
+        class="mood-item press-scale {{selectedMoodId === item.id ? 'active' : ''}}"
+        style="{{selectedMoodId === item.id ? 'border-color: ' + item.color + '; box-shadow: 0 8rpx 24rpx ' + item.color + '33;' : ''}}"
+        bindtap="onSelectMood" 
+        data-id="{{item.id}}"
+      >
+        <text class="mood-emoji">{{item.emoji}}</text>
+        <text class="mood-name">{{item.name}}</text>
+        <view wx:if="{{selectedMoodId === item.id}}" class="mood-check-dot" style="background: {{item.color}};" />
+      </view>
+    </block>
+  </view>
+
+  <!-- 碎碎念与解压心语输入区 -->
+  <view class="input-card card-box">
+    <view class="input-header">
+      <text class="input-title">今日碎碎念 / 解压宣言</text>
+      <view class="quote-random-btn press-scale" bindtap="onRandomQuote">
+        <t-icon name="refresh" size="28rpx" color="{{currentMood.color}}" />
+        <text style="color: {{currentMood.color}};">换一句治愈语</text>
+      </view>
+    </view>
+
+    <!-- 治愈语展示与引用 -->
+    <view class="quote-preview" style="background: {{currentMood.color}}15; border-left: 6rpx solid {{currentMood.color}};">
+      <text class="quote-symbol">“</text>
+      <text class="quote-content">{{currentQuote}}</text>
+    </view>
+
+    <view class="textarea-wrap">
+      <t-textarea
+        value="{{userNote}}"
+        placeholder="写下今天的一件小事、一点委屈，或者什么都不想说的叹息...（也可以留空）"
+        maxlength="150"
+        disableDefaultPadding="{{true}}"
+        indicator
+        bind:change="onNoteChange"
+      />
+    </view>
+
+    <!-- 签到生成卡片按钮 -->
+    <view class="action-btn-row">
+      <t-button 
+        theme="primary" 
+        size="large" 
+        block 
+        shape="round"
+        custom-style="background: {{currentMood.color}}; border-color: {{currentMood.color}}; font-weight: 600; box-shadow: 0 8rpx 20rpx {{currentMood.color}}44;"
+        bindtap="onGenerateCard"
+      >
+        ✨ 签到并生成今日心晴卡片
+      </t-button>
+    </view>
+  </view>
+
+  <!-- 生成的卡片预览区域（生成后优雅展示） -->
+  <view wx:if="{{generatedCard}}" id="card-display-area" class="card-display-section">
+    <view class="result-title-bar">
+      <text class="result-badge">今日情绪卡片已生成</text>
+      <text class="result-sub">可分享给好友抱抱、互动评论或保存海报</text>
+    </view>
+
+    <!-- 卡片主体视觉（高质感） -->
+    <view class="mood-card-preview" style="background: {{generatedCard.moodGradient}};">
+      <view class="card-top-row">
+        <view class="card-date-box">
+          <text class="card-date-day">{{cardDay}}</text>
+          <view class="card-date-col">
+            <text class="card-date-ym">{{cardYearMonth}}</text>
+            <text class="card-date-week">{{generatedCard.weekDay}}</text>
+          </view>
+        </view>
+        <view class="card-weather-tag">
+          <text>{{generatedCard.weatherEmoji}} {{generatedCard.weatherName}} {{generatedCard.weatherTemp}}</text>
+        </view>
+      </view>
+
+      <!-- 情绪焦点 -->
+      <view class="card-mood-focus">
+        <text class="card-mood-emoji float-anim">{{generatedCard.moodEmoji}}</text>
+        <view class="card-mood-info">
+          <view class="card-mood-title">{{generatedCard.moodName}}</view>
+          <view class="card-mood-tagline">今日心晴指数 · {{cardIndexRate}}</view>
+        </view>
+      </view>
+
+      <!-- 治愈金句 -->
+      <view class="card-quote-box">
+        <text class="card-quote-text">{{generatedCard.quote}}</text>
+      </view>
+
+      <!-- 用户记录的碎碎念 -->
+      <view wx:if="{{generatedCard.note}}" class="card-note-box">
+        <view class="card-note-label">✦ 今日心事手记：</view>
+        <view class="card-note-text">{{generatedCard.note}}</view>
+      </view>
+
+      <!-- 卡片底部作者信息 -->
+      <view class="card-footer-row">
+        <view class="card-author">
+          <t-avatar image="{{generatedCard.creator.avatarUrl}}" size="small" />
+          <text class="card-author-name">{{generatedCard.creator.nickName}}</text>
+        </view>
+        <view class="card-logo-tag">心晴解压岛 · 每日签</view>
+      </view>
+    </view>
+
+    <!-- 卡片操作功能区 -->
+    <view class="card-actions-grid">
+      <!-- 微信分享给好友 -->
+      <button class="action-btn-item share-btn press-scale" open-type="share">
+        <view class="action-icon-wrap" style="background: #EBF8F2;">
+          <t-icon name="share" size="44rpx" color="#00A870" />
+        </view>
+        <text class="action-btn-label">分享卡片给好友</text>
+        <text class="action-btn-sub">好友可抱抱与留言</text>
+      </button>
+
+      <!-- 前往互动评论详情（好友视角） -->
+      <view class="action-btn-item press-scale" bindtap="goToCardDetail">
+        <view class="action-icon-wrap" style="background: #ECF2FE;">
+          <t-icon name="chat" size="44rpx" color="#0052D9" />
+        </view>
+        <text class="action-btn-label">查看好友留言</text>
+        <text class="action-btn-sub">互动板与温暖抱抱</text>
+      </view>
+
+      <!-- 保存海报图片 -->
+      <view class="action-btn-item press-scale" bindtap="onSavePoster">
+        <view class="action-icon-wrap" style="background: #FFF1E9;">
+          <t-icon name="download" size="44rpx" color="#ED7B2F" />
+        </view>
+        <text class="action-btn-label">保存精美海报</text>
+        <text class="action-btn-sub">发朋友圈/存相册</text>
+      </view>
+
+      <!-- 快速前往解压小屋 -->
+      <view class="action-btn-item press-scale" bindtap="goToDecompress">
+        <view class="action-icon-wrap" style="background: #F2EEFF;">
+          <t-icon name="sound" size="44rpx" color="#722ED1" />
+        </view>
+        <text class="action-btn-label">去解压屋歇会儿</text>
+        <text class="action-btn-sub">木鱼/捏泡泡放空</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 天气氛围切换弹窗 -->
+  <t-popup visible="{{weatherPickerVisible}}" placement="bottom" bind:visible-change="onCloseWeatherPicker">
+    <view class="weather-picker-panel">
+      <view class="picker-header">
+        <text class="picker-title">选择今日天气与氛围感</text>
+        <t-icon name="close" size="40rpx" color="#999" bindtap="onCloseWeatherPicker" />
+      </view>
+      <view class="weather-list">
+        <block wx:for="{{weatherList}}" wx:key="id">
+          <view 
+            class="weather-option press-scale {{currentWeather.id === item.id ? 'active' : ''}}"
+            bindtap="onSelectWeather"
+            data-item="{{item}}"
+          >
+            <text class="opt-emoji">{{item.emoji}}</text>
+            <view class="opt-info">
+              <view class="opt-name">{{item.name}} · {{item.temp}}</view>
+              <view class="opt-desc">{{item.desc}}</view>
+            </view>
+            <t-icon wx:if="{{currentWeather.id === item.id}}" name="check" size="36rpx" color="#0052D9" />
+          </view>
+        </block>
+      </view>
+    </view>
+  </t-popup>
+
+  <!-- 隐藏的 Canvas 用于渲染生成海报 -->
+  <canvas type="2d" id="posterCanvas" class="hidden-canvas" />
+
+  <!-- 登录弹窗（首次进入未登录时自动弹出） -->
+  <login-popup visible="{{loginVisible}}" bind:close="onCloseLogin" bind:success="onLoginSuccess" />
+
+  <!-- TDesign 轻提示组件 -->
+  <t-toast id="t-toast" />
+  <view class="safe-bottom" />
+</view>

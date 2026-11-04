@@ -1,0 +1,66 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/card-detail/card-detail",
+    "pages/decompress/decompress",
+    "pages/history/history",
+    "pages/mine/mine"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarTitleText": "心晴解压岛",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F6F7FB"
+  },
+  "tabBar": {
+    "color": "#9AA0A6",
+    "selectedColor": "#FF8C1A",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "今日心晴",
+        "iconPath": "images/tab/home.png",
+        "selectedIconPath": "images/tab/home-active.png"
+      },
+      {
+        "pagePath": "pages/decompress/decompress",
+        "text": "解压小憩",
+        "iconPath": "images/tab/relax.png",
+        "selectedIconPath": "images/tab/relax-active.png"
+      },
+      {
+        "pagePath": "pages/history/history",
+        "text": "情绪足迹",
+        "iconPath": "images/tab/history.png",
+        "selectedIconPath": "images/tab/history-active.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "images/tab/mine.png",
+        "selectedIconPath": "images/tab/mine-active.png"
+      }
+    ]
+  },
+  "usingComponents": {
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-icon": "tdesign-miniprogram/icon/icon",
+    "t-toast": "tdesign-miniprogram/toast/toast",
+    "t-dialog": "tdesign-miniprogram/dialog/dialog",
+    "t-tag": "tdesign-miniprogram/tag/tag",
+    "t-avatar": "tdesign-miniprogram/avatar/avatar",
+    "t-badge": "tdesign-miniprogram/badge/badge",
+    "t-popup": "tdesign-miniprogram/popup/popup",
+    "t-input": "tdesign-miniprogram/input/input",
+    "t-textarea": "tdesign-miniprogram/textarea/textarea",
+    "t-divider": "tdesign-miniprogram/divider/divider",
+    "t-empty": "tdesign-miniprogram/empty/empty",
+    "t-switch": "tdesign-miniprogram/switch/switch",
+    "t-progress": "tdesign-miniprogram/progress/progress",
+    "login-popup": "/components/login-popup/login-popup"
+  },
+  "sitemapLocation": "sitemap.json"
+}

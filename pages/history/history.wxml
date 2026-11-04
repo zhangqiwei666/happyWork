@@ -1,0 +1,88 @@
+<!-- pages/history/history.wxml -->
+<view class="history-container">
+  <!-- 顶部统计概览 -->
+  <view class="stats-card card-box">
+    <view class="stats-title">我的情绪气象站</view>
+    <view class="stats-row">
+      <view class="stat-col">
+        <text class="stat-num">{{cardList.length}}</text>
+        <text class="stat-label">记录天数</text>
+      </view>
+      <view class="stat-divider" />
+      <view class="stat-col">
+        <text class="stat-num">{{totalReactions}}</text>
+        <text class="stat-label">收获温暖</text>
+      </view>
+      <view class="stat-divider" />
+      <view class="stat-col">
+        <text class="stat-num">{{totalComments}}</text>
+        <text class="stat-label">好友留言</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 历史卡片列表 -->
+  <view class="list-title-row">
+    <text class="list-title">时光漫步 · 往期卡片</text>
+    <text class="list-tip">点击卡片查看好友留言详情</text>
+  </view>
+
+  <view class="card-timeline">
+    <block wx:if="{{cardList.length > 0}}">
+      <block wx:for="{{cardList}}" wx:key="id">
+        <view 
+          class="timeline-card card-box press-scale" 
+          bindtap="onOpenCardDetail" 
+          data-id="{{item.id}}"
+        >
+          <!-- 顶部时间与天气 -->
+          <view class="tl-header">
+            <view class="tl-date">
+              <text class="tl-day">{{item.dayNum}}</text>
+              <view class="tl-ym-col">
+                <text class="tl-ym">{{item.yearMonth}}</text>
+                <text class="tl-week">{{item.weekDay}}</text>
+              </view>
+            </view>
+            <view class="tl-weather">
+              <text>{{item.weatherEmoji}} {{item.weatherName}}</text>
+            </view>
+          </view>
+
+          <!-- 情绪主要展示 -->
+          <view class="tl-mood-row" style="background: {{item.moodColor}}15;">
+            <text class="tl-emoji">{{item.moodEmoji}}</text>
+            <view class="tl-mood-info">
+              <text class="tl-mood-name" style="color: {{item.moodColor}};">{{item.moodName}}</text>
+              <text class="tl-quote-summary">“{{item.quote}}”</text>
+            </view>
+          </view>
+
+          <!-- 碎碎念记录 -->
+          <view wx:if="{{item.note}}" class="tl-note-text">
+            {{item.note}}
+          </view>
+
+          <!-- 底部互动数据汇总 -->
+          <view class="tl-footer">
+            <view class="tl-counts">
+              <text class="tl-count-item">🫂 {{item.reactionCount || 0}} 温暖</text>
+              <text class="tl-count-item">💬 {{item.commentCount || 0}} 留言</text>
+            </view>
+            <view class="tl-arrow">
+              <text>查看详情</text>
+              <t-icon name="chevron-right" size="28rpx" color="#999" />
+            </view>
+          </view>
+        </view>
+      </block>
+    </block>
+    <block wx:else>
+      <view class="empty-wrap">
+        <t-empty icon="info-circle" description="还没有生成过情绪卡片，快去首页签到吧" />
+      </view>
+    </block>
+  </view>
+
+  <view class="safe-bottom" />
+</view>

@@ -1,0 +1,19 @@
+{
+  "name": "fun-miniprogram",
+  "version": "1.0.0",
+  "description": "基于腾讯 TDesign 的娱乐微信小程序",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "miniprogram",
+    "tdesign",
+    "entertainment"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "tdesign-miniprogram": "^1.17.0"
+  }
+}

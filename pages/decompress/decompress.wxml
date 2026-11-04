@@ -1,0 +1,118 @@
+<!-- pages/decompress/decompress.wxml -->
+<view class="decompress-container">
+  <!-- TDesign Tabs 选项卡 -->
+  <view class="tabs-header">
+    <t-tabs value="{{currentTab}}" bind:change="onTabChange" theme="card">
+      <t-tab-panel label="🪵 赛博木鱼" value="woodfish" />
+      <t-tab-panel label="🫧 捏气泡纸" value="bubble" />
+      <t-tab-panel label="🌬️ 呼吸放空" value="breathe" />
+    </t-tabs>
+  </view>
+
+  <!-- 1. 赛博木鱼模块 -->
+  <view wx:if="{{currentTab === 'woodfish'}}" class="tab-content woodfish-content">
+    <view class="woodfish-header">
+      <view class="count-display">
+        <text class="count-label">今日清心敲击</text>
+        <text class="count-num">{{woodFishCount}}</text>
+      </view>
+      <view class="sound-toggle press-scale" bindtap="toggleVibrate">
+        <t-icon name="{{vibrateEnabled ? 'check-circle' : 'close-circle'}}" size="32rpx" color="{{vibrateEnabled ? '#0052D9' : '#999'}}" />
+        <text class="toggle-text">触感震动：{{vibrateEnabled ? '开启' : '关闭'}}</text>
+      </view>
+    </view>
+
+    <!-- 木鱼主体与敲击动效 -->
+    <view class="woodfish-stage">
+      <!-- 浮动文字飘出动效列表 -->
+      <block wx:for="{{floatTexts}}" wx:key="id">
+        <text 
+          class="float-text" 
+          style="left: {{item.x}}rpx; top: {{item.y}}rpx; animation-duration: 0.9s;"
+        >
+          {{item.text}}
+        </text>
+      </block>
+
+      <!-- 木鱼本身 -->
+      <view 
+        class="woodfish-circle press-scale {{isStriking ? 'striking' : ''}}" 
+        bindtap="onHitWoodfish"
+      >
+        <text class="woodfish-icon">🪷</text>
+        <text class="hit-tip">轻触敲击</text>
+      </view>
+    </view>
+
+    <view class="woodfish-footer-tip">
+      <text>每一次敲击，都是在向烦恼告别</text>
+    </view>
+  </view>
+
+  <!-- 2. 捏气泡膜模块 -->
+  <view wx:if="{{currentTab === 'bubble'}}" class="tab-content bubble-content">
+    <view class="bubble-header">
+      <view class="bubble-stats">
+        <text>已捏爆 <text class="highlight">{{bubblePoppedCount}}</text> 个烦恼泡泡</text>
+      </view>
+      <view class="reset-bubble-btn press-scale" bindtap="onResetBubbles">
+        <t-icon name="refresh" size="28rpx" color="#0052D9" />
+        <text>换一张全新气泡纸</text>
+      </view>
+    </view>
+
+    <!-- 气泡阵列 -->
+    <view class="bubble-grid">
+      <block wx:for="{{bubbles}}" wx:key="id">
+        <view 
+          class="bubble-cell press-scale {{item.popped ? 'popped' : ''}}"
+          bindtap="onPopBubble"
+          data-index="{{index}}"
+        >
+          <view class="bubble-inner">
+            <text wx:if="{{item.popped}}" class="pop-mark">💥</text>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <view class="bubble-footer-tip">
+      <text>指尖的噼啪声，是最纯粹的解压白噪音</text>
+    </view>
+  </view>
+
+  <!-- 3. 呼吸放空模块 -->
+  <view wx:if="{{currentTab === 'breathe'}}" class="tab-content breathe-content">
+    <view class="breathe-stage">
+      <!-- 动态呼吸光环 -->
+      <view class="breathe-circle {{breatheState}}">
+        <text class="breathe-state-text">{{breatheText}}</text>
+        <text class="breathe-timer">{{breatheTimer}}s</text>
+      </view>
+    </view>
+
+    <view class="breathe-action">
+      <t-button 
+        theme="{{isBreathing ? 'danger' : 'primary'}}" 
+        size="large" 
+        shape="round" 
+        block
+        bindtap="toggleBreathe"
+      >
+        {{isBreathing ? '停止放空' : '开始 4-7-8 呼吸放松'}}
+      </t-button>
+    </view>
+
+    <view class="breathe-guide-card card-box">
+      <view class="guide-title">4-7-8 呼吸法则</view>
+      <view class="guide-steps">
+        <view class="step-item">1. 吸气 4 秒：感受新鲜空气注入身体</view>
+        <view class="step-item">2. 屏息 7 秒：让身心静止，清空脑海杂念</view>
+        <view class="step-item">3. 呼气 8 秒：缓缓将所有焦虑与压力排出</view>
+      </view>
+    </view>
+  </view>
+
+  <t-toast id="t-toast" />
+  <view class="safe-bottom" />
+</view>

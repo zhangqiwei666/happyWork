@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- 渐变背景：活力亮黄色与暖橙色，营造开心解压氛围 -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE875"/>
+      <stop offset="100%" stop-color="#FFB326"/>
+    </linearGradient>
+
+    <!-- 牛马皮肤渐变：健康可爱的暖奶杏色 -->
+    <linearGradient id="skinGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFF5EA"/>
+      <stop offset="100%" stop-color="#FDE2C6"/>
+    </linearGradient>
+
+    <!-- 领带红渐变 -->
+    <linearGradient id="tieGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF5B5B"/>
+      <stop offset="100%" stop-color="#D92020"/>
+    </linearGradient>
+
+    <!-- 咖啡杯渐变 -->
+    <linearGradient id="cupGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4EBF98"/>
+      <stop offset="100%" stop-color="#2D9A74"/>
+    </linearGradient>
+
+    <!-- 投影 -->
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#C27A10" flood-opacity="0.25"/>
+    </filter>
+    <filter id="elementShadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#803D00" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <!-- 图标圆角矩形外框 (iOS / 微信 App 标准圆角) -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+
+  <!-- 背景装饰光芒 / 开心上班波点 -->
+  <circle cx="90" cy="110" r="16" fill="#FFFFFF" opacity="0.6"/>
+  <circle cx="70" cy="140" r="8" fill="#FFFFFF" opacity="0.4"/>
+  <circle cx="430" cy="100" r="12" fill="#FFFFFF" opacity="0.6"/>
+  <path d="M 400 130 Q 415 130 420 115 Q 425 130 440 130 Q 425 130 420 145 Q 415 130 400 130 Z" fill="#FFFFFF" opacity="0.7"/>
+  <path d="M 80 340 Q 90 340 95 330 Q 100 340 110 340 Q 100 340 95 350 Q 90 340 80 340 Z" fill="#FFFFFF" opacity="0.5"/>
+
+  <!-- 头部外阴影组 -->
+  <g filter="url(#softShadow)">
+
+    <!-- 1. 牛马可爱耳朵（大耳朵下垂带弧度） -->
+    <!-- 左耳 -->
+    <path d="M 130 200 C 70 170 50 240 100 280 C 130 300 155 250 140 210 Z" fill="#F8D3B0" stroke="#7A451A" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M 120 215 C 80 195 70 240 105 265 C 120 275 135 245 125 220 Z" fill="#FFAAA6"/>
+
+    <!-- 右耳 -->
+    <path d="M 382 200 C 442 170 462 240 412 280 C 382 300 357 250 372 210 Z" fill="#F8D3B0" stroke="#7A451A" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M 392 215 C 432 195 442 240 407 265 C 392 275 377 245 387 220 Z" fill="#FFAAA6"/>
+
+    <!-- 2. 小牛角（金色萌系小牛角） -->
+    <!-- 左角 -->
+    <path d="M 175 145 C 150 90 120 95 135 155 C 145 165 170 160 175 145 Z" fill="#FFC933" stroke="#7A451A" stroke-width="8" stroke-linejoin="round"/>
+    <!-- 右角 -->
+    <path d="M 337 145 C 362 90 392 95 377 155 C 367 165 342 160 337 145 Z" fill="#FFC933" stroke="#7A451A" stroke-width="8" stroke-linejoin="round"/>
+
+    <!-- 3. 头顶一撮可爱呆毛 / 小刘海 -->
+    <path d="M 240 125 C 230 85 285 95 265 130 C 275 105 305 115 280 140 Z" fill="#8B4A1D"/>
+
+    <!-- 4. 身体：穿戴白衬衫 + 正式小西装 -->
+    <!-- 蓝青色小西装肩部 -->
+    <path d="M 140 400 C 140 370 170 350 256 350 C 342 350 372 370 372 400 L 400 512 L 112 512 Z" fill="#3A506B" stroke="#7A451A" stroke-width="8"/>
+    <!-- 白衬衫大 V 领 -->
+    <path d="M 200 350 L 256 460 L 312 350 Z" fill="#FFFFFF" stroke="#7A451A" stroke-width="8"/>
+    <!-- 红色打工精神领带 -->
+    <path d="M 246 385 L 266 385 L 272 405 L 256 412 L 240 405 Z" fill="url(#tieGrad)"/>
+    <path d="M 243 408 L 269 408 L 275 480 L 256 505 L 237 480 Z" fill="url(#tieGrad)" stroke="#9E1414" stroke-width="4"/>
+    <!-- 工牌挂绳 (打工人灵魂配置) -->
+    <path d="M 175 355 L 225 450" stroke="#FF7A00" stroke-width="7" stroke-linecap="round"/>
+    <path d="M 337 355 L 287 450" stroke="#FF7A00" stroke-width="7" stroke-linecap="round"/>
+
+    <!-- 5. 圆嘟嘟牛马大脸蛋 -->
+    <ellipse cx="256" cy="245" rx="125" ry="115" fill="url(#skinGrad)" stroke="#7A451A" stroke-width="8"/>
+
+    <!-- 6. 鼻子与嘴巴大底座（浅黄杏肉色突出嘴套） -->
+    <ellipse cx="256" cy="275" rx="72" ry="52" fill="#FFEFE0" stroke="#7A451A" stroke-width="7"/>
+
+    <!-- 俩可爱牛鼻孔 -->
+    <ellipse cx="236" cy="260" rx="9" ry="13" transform="rotate(-15 236 260)" fill="#7A451A"/>
+    <ellipse cx="276" cy="260" rx="9" ry="13" transform="rotate(15 276 260)" fill="#7A451A"/>
+
+    <!-- 开心大笑弯弯嘴 + 露出的萌舌头 -->
+    <path d="M 220 280 Q 256 325 292 280 Z" fill="#E63946" stroke="#7A451A" stroke-width="6" stroke-linejoin="round"/>
+    <path d="M 235 295 Q 256 320 277 295 C 267 285 245 285 235 295 Z" fill="#FF8FA3"/>
+
+    <!-- 7. 幸福眯眯弯月笑眼 (开心上班状态) -->
+    <path d="M 175 210 C 185 185 220 185 228 212" fill="none" stroke="#5C3317" stroke-width="9" stroke-linecap="round"/>
+    <path d="M 284 212 C 292 185 327 185 337 210" fill="none" stroke="#5C3317" stroke-width="9" stroke-linecap="round"/>
+
+    <!-- 弯弯长睫毛/欢快眉毛 -->
+    <path d="M 175 180 Q 200 168 225 180" fill="none" stroke="#8B4A1D" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 287 180 Q 312 168 337 180" fill="none" stroke="#8B4A1D" stroke-width="6" stroke-linecap="round"/>
+
+    <!-- 8. 元气粉扑扑大腮红 -->
+    <ellipse cx="160" cy="245" rx="18" ry="12" fill="#FF5C77" opacity="0.6"/>
+    <ellipse cx="352" cy="245" rx="18" ry="12" fill="#FF5C77" opacity="0.6"/>
+    <!-- 腮红上的高光小点 -->
+    <circle cx="155" cy="243" r="3" fill="#FFFFFF" opacity="0.8"/>
+    <circle cx="347" cy="243" r="3" fill="#FFFFFF" opacity="0.8"/>
+
+    <!-- 9. 右手端着打工人的“续命咖啡” / 奶茶 -->
+    <g transform="translate(325, 335)" filter="url(#elementShadow)">
+      <!-- 奶茶/咖啡纸杯 -->
+      <path d="M 10 35 L 20 115 C 22 122 30 126 38 126 L 72 126 C 80 126 88 122 90 115 L 100 35 Z" fill="url(#cupGrad)" stroke="#7A451A" stroke-width="6"/>
+      <!-- 杯套隔热瓦楞 -->
+      <path d="M 14 55 L 20 90 L 90 90 L 96 55 Z" fill="#E9C46A" stroke="#7A451A" stroke-width="5"/>
+      <!-- 杯盖 -->
+      <rect x="5" y="24" width="100" height="15" rx="7" fill="#FFFFFF" stroke="#7A451A" stroke-width="6"/>
+      <rect x="42" y="16" width="26" height="10" rx="3" fill="#FFFFFF" stroke="#7A451A" stroke-width="5"/>
+      <!-- 冒热气 / 能量香气 -->
+      <path d="M 45 6 Q 40 -8 50 -18" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.85"/>
+      <path d="M 62 10 Q 72 -5 65 -22" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.85"/>
+      <!-- 杯套上的开心小笑脸 -->
+      <circle cx="55" cy="72" r="10" fill="#FFFFFF"/>
+      <path d="M 50 71 Q 55 77 60 71" fill="none" stroke="#2D9A74" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- 握着杯子的小牛蹄手 (圆润蹄子) -->
+      <ellipse cx="14" cy="75" rx="16" ry="14" fill="#FDE2C6" stroke="#7A451A" stroke-width="6"/>
+      <path d="M 14 65 L 14 85" stroke="#7A451A" stroke-width="4"/>
+    </g>
+
+    <!-- 10. 左手：元气打招呼 / 比耶小牛蹄 -->
+    <g transform="translate(90, 345)" filter="url(#elementShadow)">
+      <!-- 举起的小牛蹄手 -->
+      <ellipse cx="35" cy="25" rx="20" ry="17" fill="#FDE2C6" stroke="#7A451A" stroke-width="6"/>
+      <!-- 牛蹄分趾小线条 -->
+      <path d="M 35 12 L 35 32" stroke="#7A451A" stroke-width="5" stroke-linecap="round"/>
+      <!-- 挥手动态小线条 -->
+      <path d="M 10 5 C 10 -5 20 -15 30 -15" fill="none" stroke="#FF8C00" stroke-width="5" stroke-linecap="round"/>
+      <path d="M 45 -18 C 55 -15 65 -5 65 5" fill="none" stroke="#FF8C00" stroke-width="5" stroke-linecap="round"/>
+    </g>
+
+    <!-- 11. 胸前挂着的工牌（写着“打工人” / “VIP牛马”） -->
+    <g transform="translate(230, 440)" filter="url(#elementShadow)">
+      <rect x="0" y="0" width="52" height="64" rx="6" fill="#FFFFFF" stroke="#7A451A" stroke-width="4"/>
+      <!-- 工牌挂孔 -->
+      <rect x="18" y="4" width="16" height="5" rx="2.5" fill="#C5D3E8"/>
+      <!-- 头像照片区 -->
+      <rect x="8" y="14" width="36" height="26" rx="3" fill="#FFE8A3"/>
+      <circle cx="26" cy="24" r="7" fill="#FF8C00"/>
+      <!-- 姓名横线 -->
+      <line x1="12" y1="46" x2="40" y2="46" stroke="#3A506B" stroke-width="4" stroke-linecap="round"/>
+      <line x1="16" y1="53" x2="36" y2="53" stroke="#9AA0A6" stroke-width="3" stroke-linecap="round"/>
+    </g>
+
+  </g>
+</svg>

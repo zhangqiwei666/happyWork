@@ -1,0 +1,268 @@
+/* pages/decompress/decompress.wxss */
+.decompress-container {
+  min-height: 100vh;
+  padding: 24rpx 32rpx;
+  box-sizing: border-box;
+}
+
+.tabs-header {
+  margin-bottom: 32rpx;
+}
+
+.tab-content {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 木鱼部分 */
+.woodfish-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #FFFFFF;
+  padding: 24rpx 32rpx;
+  border-radius: var(--td-radius-large);
+  margin-bottom: 40rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.03);
+}
+
+.count-display {
+  display: flex;
+  flex-direction: column;
+}
+
+.count-label {
+  font-size: 22rpx;
+  color: #888;
+}
+
+.count-num {
+  font-size: 44rpx;
+  font-weight: 800;
+  color: #0052D9;
+  margin-top: 4rpx;
+}
+
+.sound-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.toggle-text {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.woodfish-stage {
+  position: relative;
+  height: 600rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40rpx;
+}
+
+.woodfish-circle {
+  width: 380rpx;
+  height: 380rpx;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #FFFFFF, #E2E6F0);
+  box-shadow: 0 20rpx 50rpx rgba(0, 82, 217, 0.15), inset 0 2rpx 10rpx rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s ease;
+}
+
+.woodfish-circle.striking {
+  transform: scale(0.92);
+}
+
+.woodfish-icon {
+  font-size: 140rpx;
+}
+
+.hit-tip {
+  font-size: 24rpx;
+  color: #888;
+  margin-top: 10rpx;
+}
+
+/* 飘字动画 */
+@keyframes floatUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-160rpx) scale(1.2);
+  }
+}
+
+.float-text {
+  position: absolute;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #0052D9;
+  pointer-events: none;
+  animation: floatUp 0.9s ease-out forwards;
+}
+
+.woodfish-footer-tip {
+  text-align: center;
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 捏气泡膜部分 */
+.bubble-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #FFFFFF;
+  padding: 24rpx 32rpx;
+  border-radius: var(--td-radius-large);
+  margin-bottom: 32rpx;
+  font-size: 26rpx;
+  color: #444;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.03);
+}
+
+.highlight {
+  font-weight: 700;
+  color: #0052D9;
+  font-size: 30rpx;
+}
+
+.reset-bubble-btn {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 24rpx;
+  color: #0052D9;
+  font-weight: 600;
+}
+
+.bubble-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24rpx;
+  background: #FFFFFF;
+  padding: 36rpx 28rpx;
+  border-radius: var(--td-radius-large);
+  box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.04);
+  margin-bottom: 32rpx;
+}
+
+.bubble-cell {
+  aspect-ratio: 1;
+  background: radial-gradient(circle at 30% 30%, #FFFFFF, #D6E4FF);
+  border-radius: 50%;
+  box-shadow: 0 6rpx 14rpx rgba(0, 82, 217, 0.2), inset 0 2rpx 8rpx rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.bubble-cell.popped {
+  background: #E8EAEF;
+  box-shadow: inset 0 6rpx 12rpx rgba(0, 0, 0, 0.12);
+  transform: scale(0.9);
+}
+
+.pop-mark {
+  font-size: 28rpx;
+  opacity: 0.6;
+}
+
+.bubble-footer-tip {
+  text-align: center;
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 呼吸放空部分 */
+.breathe-stage {
+  height: 520rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.breathe-circle {
+  width: 320rpx;
+  height: 320rpx;
+  border-radius: 50%;
+  background: radial-gradient(circle, #E6F0FF 0%, #BAE0FF 60%, #91CAFF 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 50rpx rgba(24, 144, 255, 0.3);
+  transition: transform 4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.breathe-circle.inhale {
+  transform: scale(1.35);
+  background: radial-gradient(circle, #FFFBE6 0%, #FFE58F 60%, #FFD666 100%);
+  box-shadow: 0 0 70rpx rgba(250, 173, 20, 0.4);
+}
+
+.breathe-circle.hold {
+  transform: scale(1.35);
+  background: radial-gradient(circle, #F6FFED 0%, #D9F7BE 60%, #B7EB8F 100%);
+  box-shadow: 0 0 70rpx rgba(82, 196, 26, 0.4);
+}
+
+.breathe-circle.exhale {
+  transform: scale(0.9);
+  background: radial-gradient(circle, #E6F0FF 0%, #BAE0FF 60%, #91CAFF 100%);
+  box-shadow: 0 0 40rpx rgba(24, 144, 255, 0.2);
+}
+
+.breathe-state-text {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.breathe-timer {
+  font-size: 40rpx;
+  font-weight: 800;
+  color: #0052D9;
+  margin-top: 10rpx;
+}
+
+.breathe-action {
+  margin-bottom: 36rpx;
+}
+
+.breathe-guide-card {
+  padding: 32rpx;
+}
+
+.guide-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 16rpx;
+}
+
+.guide-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.6;
+}

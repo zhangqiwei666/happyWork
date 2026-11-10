@@ -77,6 +77,7 @@ Page({
 
   onLoginSuccess() {
     this.setData({ loginVisible: false });
+    
     wx.showTabBar({ fail: () => {} });
   },
 

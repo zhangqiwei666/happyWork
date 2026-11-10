@@ -2,44 +2,49 @@
 page {
   --td-brand-color: #0052D9;
   --td-brand-color-light: #ECF2FE;
+  --td-brand-color-active: #003CAB;
   --td-success-color: #00A870;
   --td-warning-color: #ED7B2F;
   --td-error-color: #E34D59;
-  --td-text-color-primary: #181818;
-  --td-text-color-secondary: #666666;
-  --td-text-color-placeholder: #999999;
-  --td-bg-color-page: #F6F7FB;
+  --td-text-color-primary: #1F2329;
+  --td-text-color-secondary: #5F6570;
+  --td-text-color-placeholder: #A6A9B0;
+  --td-bg-color-page: #F6F8FC;
   --td-bg-color-container: #FFFFFF;
-  --td-radius-large: 24rpx;
-  --td-radius-medium: 16rpx;
+  --td-radius-large: 28rpx;
+  --td-radius-medium: 20rpx;
+  --td-radius-small: 12rpx;
   --td-radius-round: 999rpx;
 
   background-color: var(--td-bg-color-page);
   color: var(--td-text-color-primary);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', STHeiti, 'Microsoft YaHei', sans-serif;
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
 }
 
-/* 优雅卡片容器 */
+/* 优雅质感卡片容器（提升弥散阴影与细腻边框） */
 .card-box {
   background: #FFFFFF;
   border-radius: var(--td-radius-large);
-  padding: 32rpx;
-  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.04);
+  padding: 34rpx 32rpx;
+  box-shadow: 0 10rpx 36rpx rgba(31, 35, 41, 0.04), 0 2rpx 8rpx rgba(31, 35, 41, 0.02);
+  border: 1rpx solid rgba(240, 243, 248, 0.9);
   margin-bottom: 24rpx;
-  transition: all 0.3s ease;
+  transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-sizing: border-box;
 }
 
-/* 按钮点击触感效果 */
+/* 按钮点击触感微交互动效 */
 .press-scale {
-  transition: transform 0.15s ease;
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.16s ease;
 }
 .press-scale:active {
   transform: scale(0.96);
+  opacity: 0.9;
 }
 
-/* 浮动动画 */
+/* 浮动微动画 */
 @keyframes float {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-8px); }
@@ -47,7 +52,14 @@ page {
 }
 
 .float-anim {
-  animation: float 3s ease-in-out infinite;
+  animation: float 3.2s ease-in-out infinite;
+}
+
+/* 柔和呼吸浮动动画 */
+@keyframes breatheLight {
+  0% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
+  100% { opacity: 0.8; transform: scale(1); }
 }
 
 /* 安全区适配底部 */

@@ -9,7 +9,7 @@
           <text class="profile-name">{{userInfo.nickName}}</text>
           <t-icon name="edit" size="28rpx" color="#666" />
         </view>
-        <text class="profile-id">{{authInfo.phoneMasked ? '手机号：' + authInfo.phoneMasked : 'ID: ' + userInfo.id + ' · 今日心晴已守护'}}</text>
+        <text class="profile-id">ID: {{userInfo.id}} · 今日心晴已守护</text>
       </view>
       <view class="profile-info" wx:else bindtap="openLogin">
         <text class="profile-name">点击登录</text>
